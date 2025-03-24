@@ -8,13 +8,25 @@ const mongoose = require('mongoose');
 let mongoServer;
 
 before(async () => {
+  // Set strictQuery to false to address deprecation warning
+  mongoose.set('strictQuery', false);
+  
   mongoServer = await MongoMemoryServer.create();
-  await mongoose.connect(mongoServer.getUri());
+  const mongoUri = await mongoServer.getUri();
+  
+  await mongoose.connect(mongoUri, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+  });
 });
 
 after(async () => {
-  await mongoose.disconnect();
-  await mongoServer.stop();
+  if (mongoose.connection.readyState !== 0) {
+    await mongoose.disconnect();
+  }
+  if (mongoServer) {
+    await mongoServer.stop();
+  }
 });
 
 describe('Authentication Test', () => {
@@ -27,8 +39,10 @@ describe('Authentication Test', () => {
         password: 'password123',
         phone: '1234567890',
         id_type: 'passport',
-        id_number: 'AB123456'
+        id_number: 'AB123456',
+        roll: 'guest'
       });
+    
     expect(res.status).to.equal(201);
     expect(res.body).to.have.property('token');
   });
@@ -40,6 +54,7 @@ describe('Authentication Test', () => {
         email: 'test@example.com',
         password: 'password123'
       });
+    
     expect(res.status).to.equal(200);
     expect(res.body).to.have.property('token');
   });
