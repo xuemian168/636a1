@@ -11,6 +11,7 @@ on:
 jobs:
     build:
         runs-on: self-hosted
+        environment: production
 
         steps:
         - name: Checkout code
@@ -37,10 +38,11 @@ jobs:
             sudo rm -rf /var/www/html/*
             sudo cp -r build/* /var/www/html/
 
-        - name: Install system dependencies
+        - name: Setup environment variables
           run: |
-            sudo apt-get update
-            sudo apt-get install -y libssl1.1
+            echo "MONGO_URI=${{ secrets.MONGO_URI }}" > backend/.env
+            echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> backend/.env
+            echo "PORT=5001" >> backend/.env
 
         - name: Run backend tests
           run: |
