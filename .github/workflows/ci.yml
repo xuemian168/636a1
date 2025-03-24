@@ -37,6 +37,12 @@ jobs:
             sudo rm -rf /var/www/html/*
             sudo cp -r build/* /var/www/html/
 
+        - name: Run backend tests
+          run: |
+            cd backend
+            npm install --save-dev mocha chai mongodb-memory-server
+            npm test
+
         - name: Start backend with PM2
           run: |
             cd backend
