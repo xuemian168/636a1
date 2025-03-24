@@ -16,13 +16,11 @@ app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/hotel', require('./routes/hotelRoutes'));
 app.use('/api/orders', require('./routes/orderRoutes'));
 
-// Export the app object for testing
+module.exports = app;
+
+// 仅在直接运行时启动服务器
 if (require.main === module) {
-    connectDB();
-    // If the file is run directly, start the server
-    const PORT = process.env.PORT || 5001;
-    app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-  }
-
-
-module.exports = app
+  app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+  });
+}
