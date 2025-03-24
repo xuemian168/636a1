@@ -6,8 +6,12 @@ const userSchema = new mongoose.Schema({
     name: { type: String, required: true },
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
-    university: { type: String },
-    address: { type: String },
+    roll: { type: String, enum: ['admin', 'guest'], default: 'guest' },
+    id_type: { type: String, enum: ['passport', 'driving_license'], required: true },
+    id_number: { type: String, required: true },
+    phone: { type: String, required: true }
+}, {
+    timestamps: true
 });
 
 userSchema.pre('save', async function (next) {
