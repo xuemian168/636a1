@@ -18,9 +18,6 @@ before(async () => {
     useNewUrlParser: true,
     useUnifiedTopology: true
   });
-
-  // Clear users collection before tests
-  await User.deleteMany({});
 });
 
 after(async () => {
@@ -60,5 +57,11 @@ describe('Authentication Test', () => {
     
     expect(res.status).to.equal(200);
     expect(res.body).to.have.property('token');
+  });
+
+  after(async () => {
+    // 清理测试数据
+    await User.deleteMany({});
+    await Room.deleteMany({});
   });
 });

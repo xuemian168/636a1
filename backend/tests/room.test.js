@@ -10,9 +10,9 @@ describe('Room API Test', () => {
   let roomId;
 
   before(async () => {
-    // 清除现有数据
-    await User.deleteMany({});
-    await Room.deleteMany({});
+    // // 清除现有数据
+    // await User.deleteMany({});
+    // await Room.deleteMany({});
 
     // 直接创建管理员用户
     const adminUser = await User.create({
@@ -34,6 +34,12 @@ describe('Room API Test', () => {
       });
 
     authToken = loginRes.body.token;
+  });
+
+  after(async () => {
+    // 清理测试数据
+    await User.deleteMany({});
+    await Room.deleteMany({});
   });
 
   it('Create Room Test', async () => {
