@@ -5,6 +5,7 @@ const app = require('../server');
 const { MongoMemoryServer } = require('mongodb-memory-server');
 const mongoose = require('mongoose');
 const User = require('../models/User');
+const { Room } = require('../models/Room');  // 添加 Room 模型引入
 
 let mongoServer;
 
@@ -21,6 +22,10 @@ before(async () => {
 });
 
 after(async () => {
+  // 清理所有测试数据
+  await User.deleteMany({});
+  await Room.deleteMany({});
+  
   if (mongoose.connection.readyState !== 0) {
     await mongoose.disconnect();
   }
