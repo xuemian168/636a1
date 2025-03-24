@@ -74,5 +74,5 @@ jobs:
         # - name: Run frontend tests
         #   run: npm test --prefix frontend
 
-        - name: Run Both
-          run: npm run start
+        # - name: Run Both
+        #   run: npm run start
