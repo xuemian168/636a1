@@ -3,13 +3,18 @@ const expect = chai.expect;
 const request = require('supertest');
 const app = require('../server');
 const User = require('../models/User');
+const { Room } = require('../models/Room');
 
 describe('Room API Test', () => {
   let authToken;
   let roomId;
 
   before(async () => {
-    // 创建管理员用户
+    // 清除现有数据
+    await User.deleteMany({});
+    await Room.deleteMany({});
+
+    // 直接创建管理员用户
     const adminUser = await User.create({
       name: 'Admin User',
       email: 'admin@test.com',
@@ -17,7 +22,7 @@ describe('Room API Test', () => {
       phone: '1234567890',
       id_type: 'passport',
       id_number: 'AD123456',
-      roll: 'admin'  // 直接设置为管理员角色
+      roll: 'admin'
     });
 
     // 登录获取 token
@@ -27,7 +32,7 @@ describe('Room API Test', () => {
         email: 'admin@test.com',
         password: 'admin123'
       });
-    
+
     authToken = loginRes.body.token;
   });
 

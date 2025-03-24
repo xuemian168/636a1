@@ -4,11 +4,11 @@ const request = require('supertest');
 const app = require('../server');
 const { MongoMemoryServer } = require('mongodb-memory-server');
 const mongoose = require('mongoose');
+const User = require('../models/User');
 
 let mongoServer;
 
 before(async () => {
-  // Set strictQuery to false to address deprecation warning
   mongoose.set('strictQuery', false);
   
   mongoServer = await MongoMemoryServer.create();
@@ -18,6 +18,9 @@ before(async () => {
     useNewUrlParser: true,
     useUnifiedTopology: true
   });
+
+  // Clear users collection before tests
+  await User.deleteMany({});
 });
 
 after(async () => {
