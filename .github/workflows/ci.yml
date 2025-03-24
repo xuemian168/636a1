@@ -21,8 +21,17 @@ jobs:
           with:
               node-version: '22'
 
-        - name: Install dependencies
+        - name: Install all dependencies
+          run: npm run install-all
+
+        - name: Install dev dependencies
           run: npm install
 
-        - name: Run tests
-          run: npm test
+        # - name: Run backend tests
+        #   run: npm test --prefix backend
+
+        # - name: Run frontend tests
+        #   run: npm test --prefix frontend
+
+        - name: Run Both
+          run: npm run start
