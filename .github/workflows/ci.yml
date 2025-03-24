@@ -27,6 +27,47 @@ jobs:
         - name: Install dev dependencies
           run: npm install
 
+        - name: Install PM2 globally
+          run: npm install -g pm2
+
+        - name: Build frontend
+          run: |
+            cd frontend
+            npm run build
+            sudo rm -rf /var/www/html/*
+            sudo cp -r build/* /var/www/html/
+
+        - name: Start backend with PM2
+          run: |
+            cd backend
+            pm2 delete all || true
+            pm2 start server.js --name "hotel-backend"
+
+        - name: Configure Nginx
+          run: |
+            sudo tee /etc/nginx/sites-available/default << EOF
+            server {
+                listen 80;
+                server_name _;
+
+                location / {
+                    root /var/www/html;
+                    try_files \$uri \$uri/ /index.html;
+                }
+
+                location /api {
+                    proxy_pass http://localhost:5001;
+                    proxy_http_version 1.1;
+                    proxy_set_header Upgrade \$http_upgrade;
+                    proxy_set_header Connection 'upgrade';
+                    proxy_set_header Host \$host;
+                    proxy_cache_bypass \$http_upgrade;
+                }
+            }
+            EOF
+            sudo nginx -t
+            sudo systemctl restart nginx
+
         # - name: Run backend tests
         #   run: npm test --prefix backend
 
