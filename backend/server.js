@@ -17,6 +17,7 @@ app.use('/api/hotel', require('./routes/hotelRoutes'));
 app.use('/api/orders', require('./routes/orderRoutes'));
 
 module.exports = app;
+const PORT = process.env.PORT || 5001;
 
 // 仅在直接运行时启动服务器
 if (require.main === module) {
