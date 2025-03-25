@@ -1,5 +1,5 @@
 Jira URL:
-[https://ictrun.atlassian.net/jira/software/projects/DR/summary](https://ictrun.atlassian.net/jira/software/projects/DR/summary)
+[https://ictrun.atlassian.net/jira/software/projects/HBS/summary](https://ictrun.atlassian.net/jira/software/projects/HBS/summary)
 
 Requirement Diagram:
 ![Requirement Diagram](./requirements_diagram.png)
