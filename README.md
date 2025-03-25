@@ -21,5 +21,21 @@ This project is a hotel booking system. It is a web application that allows user
 ## Requirement Diagram:
 ![Requirement Diagram](./requirements_diagram.png)
 
+## Deployment:
+- Integrated:
+```bash
+npm run start
+```
+- Backend:
+```bash
+cd backend
+npm run start
+```
+- Frontend:
+```bash
+cd frontend
+npm run start
+```
+
 ## Origin Requirement:
 [Requirements](./requirements.md)
