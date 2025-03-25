@@ -2,7 +2,7 @@ Jira URL:
 [https://ictrun.atlassian.net/jira/software/projects/DR/summary](https://ictrun.atlassian.net/jira/software/projects/DR/summary)
 
 Requirement Diagram:
-![Requirement Diagram](123)
+![Requirement Diagram](./requirements_diagram.png)
 
 
 
