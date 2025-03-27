@@ -2,7 +2,7 @@ const Order = require('../models/Order');
 const Room = require('../models/Room');
 const mongoose = require('mongoose');
 
-// 获取所有订单
+// Get all orders
 const getAllOrders = async (req, res) => {
     try {
         const orders = await Order.find()
@@ -14,14 +14,14 @@ const getAllOrders = async (req, res) => {
     }
 };
 
-// 获取单个订单
+// Get order by ID
 const getOrderById = async (req, res) => {
     try {
         const order = await Order.findById(req.params.id)
             .populate('user', 'name email phone')
             .populate('room', 'roomNumber type price');
         if (!order) {
-            return res.status(404).json({ message: '订单不存在' });
+            return res.status(404).json({ message: 'Order not found' });
         }
         res.json(order);
     } catch (error) {
@@ -29,7 +29,7 @@ const getOrderById = async (req, res) => {
     }
 };
 
-// 更新订单状态
+// Update order status
 const updateOrderStatus = async (req, res) => {
     const session = await mongoose.startSession();
     session.startTransaction();
@@ -38,10 +38,10 @@ const updateOrderStatus = async (req, res) => {
         const { status, note } = req.body;
         const order = await Order.findById(req.params.id).session(session);
         if (!order) {
-            return res.status(404).json({ message: '订单不存在' });
+            return res.status(404).json({ message: 'Order not found' });
         }
 
-        // 添加状态历史记录
+        // Add status history record
         order.statusHistory.push({
             status,
             updatedBy: req.user._id,
@@ -51,11 +51,11 @@ const updateOrderStatus = async (req, res) => {
         order.status = status;
         const updatedOrder = await order.save();
 
-        // 如果状态是入住或退房，同步更新房间状态
+        // If status is CheckedIn or CheckedOut, sync room status
         if (status === 'CheckedIn' || status === 'CheckedOut') {
             const room = await Room.findById(order.room).session(session);
             if (!room) {
-                throw new Error('房间不存在');
+                throw new Error('Room not found');
             }
 
             room.status = status === 'CheckedIn' ? 'Occupied' : 'Available';
@@ -72,22 +72,22 @@ const updateOrderStatus = async (req, res) => {
     }
 };
 
-// 删除订单
+// Delete order
 const deleteOrder = async (req, res) => {
     try {
         const order = await Order.findById(req.params.id);
         if (!order) {
-            return res.status(404).json({ message: '订单不存在' });
+            return res.status(404).json({ message: 'Order not found' });
         }
 
         await order.remove();
-        res.json({ message: '订单已删除' });
+        res.json({ message: 'Order deleted successfully' });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
 };
 
-// 处理入住
+// Handle check-in
 const checkIn = async (req, res) => {
     const session = await mongoose.startSession();
     session.startTransaction();
@@ -95,33 +95,33 @@ const checkIn = async (req, res) => {
     try {
         const order = await Order.findById(req.params.id).session(session);
         if (!order) {
-            return res.status(404).json({ message: '订单不存在' });
+            return res.status(404).json({ message: 'Order not found' });
         }
 
         if (order.status !== 'Confirmed') {
-            return res.status(400).json({ message: '只有已确认的订单可以办理入住' });
+            return res.status(400).json({ message: 'Only confirmed orders can be checked in' });
         }
 
-        // 验证入住时间
+        // Validate check-in time
         const now = new Date();
         const checkInDate = new Date(order.checkIn);
         if (now < checkInDate) {
-            return res.status(400).json({ message: '还未到入住时间' });
+            return res.status(400).json({ message: 'Check-in time has not arrived yet' });
         }
 
-        // 更新订单状态
+        // Update order status
         order.statusHistory.push({
             status: 'CheckedIn',
             updatedBy: req.user._id,
-            note: '客人已入住'
+            note: 'Guest checked in'
         });
         order.status = 'CheckedIn';
         await order.save();
 
-        // 更新房间状态
+        // Update room status
         const room = await Room.findById(order.room).session(session);
         if (!room) {
-            throw new Error('房间不存在');
+            throw new Error('Room not found');
         }
         room.status = 'Occupied';
         await room.save();
@@ -136,7 +136,7 @@ const checkIn = async (req, res) => {
     }
 };
 
-// 处理退房
+// Handle check-out
 const checkOut = async (req, res) => {
     const session = await mongoose.startSession();
     session.startTransaction();
@@ -144,26 +144,26 @@ const checkOut = async (req, res) => {
     try {
         const order = await Order.findById(req.params.id).session(session);
         if (!order) {
-            return res.status(404).json({ message: '订单不存在' });
+            return res.status(404).json({ message: 'Order not found' });
         }
 
         if (order.status !== 'CheckedIn') {
-            return res.status(400).json({ message: '只有已入住的订单可以办理退房' });
+            return res.status(400).json({ message: 'Only checked-in orders can be checked out' });
         }
 
-        // 更新订单状态
+        // Update order status
         order.statusHistory.push({
             status: 'CheckedOut',
             updatedBy: req.user._id,
-            note: '客人已退房'
+            note: 'Guest checked out'
         });
         order.status = 'Completed';
         await order.save();
 
-        // 更新房间状态
+        // Update room status
         const room = await Room.findById(order.room).session(session);
         if (!room) {
-            throw new Error('房间不存在');
+            throw new Error('Room not found');
         }
         room.status = 'Available';
         await room.save();
