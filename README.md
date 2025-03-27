@@ -38,12 +38,12 @@ A modern hotel booking system that enables users to seamlessly book and manage h
 ```bash
 npm run start
 ```
-- Backend:
+- Only Backend:
 ```bash
 cd backend
 npm run start
 ```
-- Frontend:
+- Only Frontend:
 ```bash
 cd frontend
 npm run start
