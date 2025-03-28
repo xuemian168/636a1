@@ -93,7 +93,7 @@ const Index = () => {
         <div className="container mx-auto px-4 text-center">
           <h2 className="text-3xl font-bold mb-8">Contact Us</h2>
           <p className="text-xl mb-4">For reservations and inquiries:</p>
-          <p className="text-2xl font-semibold text-blue-600">+1 (555) 123-4567</p>
+          <p className="text-2xl font-semibold text-blue-600">+61 1234567</p>
           <p className="text-lg text-gray-600 mt-2">info@luxuryhotel.com</p>
           <p className="text-lg text-gray-600">123 Luxury Avenue, Brisbane, QLD 4000</p>
         </div>
